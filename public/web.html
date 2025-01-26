@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration and Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section>
+    <div id="actionSelection">
+      <button id="showRegister">Sign Up</button>
+      <button id="showLogin">Login</button>
+    </div>
+
+    <!-- Register form -->
+    <form id="registerForm">
+      <h2>Register</h2>
+      <label for="regUsername">Username:</label>
+      <input type="text" id="regUsername" name="username" placeholder="Enter username" required>
+      <label for="regPassword">Password:</label>
+      <input type="password" id="regPassword" name="password" placeholder="Enter password" required>
+      <label for="confirmPassword">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required>
+      <p id="passwordError" class="error"></p>
+      <button type="submit">Register</button>
+      <p id="registerMessage" class="message"></p>
+      <a href="#" id="loginLink">Already have an account? Log in</a>
+    </form>
+
+    <!-- Login form -->
+    <form id="loginForm">
+      <h2>Login</h2>
+      <label for="loginUsername">Username:</label>
+      <input type="text" id="loginUsername" name="username" placeholder="Enter username" required>
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" name="password" placeholder="Enter password" required>
+      <button type="submit">Login</button>
+      <p id="loginMessage" class="message"></p>
+      <a href="#" id="registerLink">Don't have an account? Sign up</a>
+    </form>
+  </section>
+
+  <script>
+    // Elements
+    const actionSelection = document.getElementById('actionSelection');
+    const registerForm = document.getElementById('registerForm');
+    const loginForm = document.getElementById('loginForm');
+    const showRegisterBtn = document.getElementById('showRegister');
+    const showLoginBtn = document.getElementById('showLogin');
+    const loginLink = document.getElementById('loginLink');
+    const registerLink = document.getElementById('registerLink');
+    const passwordError = document.getElementById('passwordError');
+    const registerMessage = document.getElementById('registerMessage');
+    const loginMessage = document.getElementById('loginMessage');
+  
+    // Initialize the page with only the selection buttons visible
+    actionSelection.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'none';
+  
+    // Show the register form
+    showRegisterBtn.addEventListener('click', () => {
+      actionSelection.style.display = 'none';
+      registerForm.style.display = 'flex';
+      loginForm.style.display = 'none';
+    });
+  
+    // Show the login form
+    showLoginBtn.addEventListener('click', () => {
+      actionSelection.style.display = 'none';
+      loginForm.style.display = 'flex';
+      registerForm.style.display = 'none';
+    });
+  
+    // Navigate to login form from the register form
+    loginLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      registerForm.style.display = 'none';
+      loginForm.style.display = 'flex';
+    });
+  
+    // Navigate to register form from the login form
+    registerLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'flex';
+    });
+  
+    // Handle registration form submission
+    registerForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+  
+      // Collect form data
+      const username = document.getElementById('regUsername').value;
+      const password = document.getElementById('regPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+  
+      // Validate passwords match
+      if (password !== confirmPassword) {
+        passwordError.textContent = "Passwords do not match.";
+        return;
+      }
+  
+      // Send data to backend
+      try {
+        const response = await fetch('http://localhost:3000/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          registerMessage.textContent = "Registration successful. You can now log in.";
+          passwordError.textContent = "";
+          registerForm.reset();
+        } else {
+          const data = await response.json();
+          registerMessage.textContent = `Error: ${data.message || 'Unable to register'}`;
+        }
+      } catch (error) {
+        registerMessage.textContent = "Error: Unable to connect to the server.";
+      }
+    });
+  
+    // Handle login form submission
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault(); 
+  
+      // Collect form data
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+  
+      // Send data to backend
+      try {
+        const response = await fetch('http://localhost:3000/api/login', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          loginMessage.textContent = `Welcome, ${data.username || 'User'}!`;
+          loginForm.reset();
+        } else {
+          const data = await response.json();
+          loginMessage.textContent = `Error: ${data.message || 'Invalid credentials'}`;
+        }
+      } catch (error) {
+        loginMessage.textContent = "Error: Unable to connect to the server.";
+      }
+    });
+  </script>
+</body>
+</html>
