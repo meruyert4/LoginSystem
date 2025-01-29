@@ -25,7 +25,7 @@ MONGO_URI=<your link>
 DB_NAME=<db name>
 ```
 
-Replace `<your link>` with your MongoDB connection URI and `<db name>` with your desired database name.
+Replace `<your link>` with your MongoDB connection URI and `<db name>` with your database name.
 
 ### 4. Start the Backend Server
 Run the following command to start the backend server:

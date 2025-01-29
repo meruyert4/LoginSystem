@@ -1,10 +1,10 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 
@@ -14,7 +14,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3000;
 
-// connection
 const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 let db;
 
@@ -29,13 +28,10 @@ client.connect()
   });
 
 app.use(cors({ origin: 'http://localhost:3000' }));
-
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html', 'css', 'js'] }));
 
-// Serve the main HTML page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'web.html'));
 });
@@ -51,7 +47,6 @@ app.post('/api/register', async (req, res) => {
   try {
     const usersCollection = db.collection('users');
 
-    // Check if the username already exists
     const existingUser = await usersCollection.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'Username already exists' });
@@ -71,7 +66,6 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Login endpoint
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -99,7 +93,6 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
