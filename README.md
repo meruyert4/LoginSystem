@@ -8,8 +8,8 @@ Basic registration and login system built with Node.js (Express) and MongoDB.
 
 ### 1. Clone the Repository
 ```bash
-git clone <https://github.com/meruyert4/LoginSystem>
-cd <LoginSystem>
+git clone https://github.com/meruyert4/LoginSystem
+cd LoginSystem
 ```
 
 ### 2. Install Dependencies
